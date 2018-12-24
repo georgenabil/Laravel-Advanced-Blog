@@ -26,8 +26,22 @@ class PostStoreRequest extends FormRequest
     public function rules()
     {
 
+        $r=$this->request->all();
+        $slug_validation = 'required|unique:posts|alpha_dash|min:5|max:100';
+
+
+       if($r['_method'] =='PUT') {
+           $urlarray = explode('/', $this->url());
+           $postid = $urlarray[sizeof($urlarray) - 1];
+           $post = Post::find($postid);
+
+           if($r['slug']==$post->slug) {
+               $slug_validation = 'required|alpha_dash|min:5|max:100';
+           }
+       }
+
         return [
-                "slug" =>'required|unique:posts|alpha_dash|min:5|max:100 ',
+                "slug" => $slug_validation,
                 "body" =>'required|min:5',
                 "title" =>'required|min:5|max:25',
                 "category_id"=>'required|integer'

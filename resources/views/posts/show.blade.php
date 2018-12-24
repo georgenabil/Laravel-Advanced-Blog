@@ -8,7 +8,15 @@
        <div class="col-md-6">
          <h1>{{$post->title}}</h1>
          <p class="lead">{{$post->body}}</p>
+
+           <div class="tags">
+               @foreach($post->tags as $tag)
+                   <label class="label label-default">{{$tag->name}}</label>
+               @endforeach
+           </div>
+
        </div>
+
 
 
        <div class="col-md-4">
@@ -61,5 +69,6 @@
        </div>
 
    </div>
+
 
 @endsection

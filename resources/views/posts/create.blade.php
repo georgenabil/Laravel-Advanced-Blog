@@ -6,7 +6,7 @@
 
 	{!! Html::style('css/parsley.css') !!}
 	{!! Html::style('css/select2.min.css') !!}
-	<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+	<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>-->
 
 	<script>
 		tinymce.init({
@@ -40,6 +40,14 @@
                        @endforeach
 
 					</select>
+
+				   <label>Tags:</label>
+				   <select class="form-control select2-multi" name="tags[]" required multiple="multiple">
+					   @foreach($tags as $tag)
+						   <option value="{{$tag->id}}">{{ $tag->name}}</option>
+					   @endforeach
+
+				   </select>
 
 				   <label>body:</label>
 				   <textarea name="body" class="form-control" minlength="5" maxlength="225" ></textarea>

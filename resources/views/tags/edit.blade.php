@@ -1,6 +1,5 @@
 @extends('main')
 
-@section('title', "| Edit Tag")
 
 @section('content')
 	

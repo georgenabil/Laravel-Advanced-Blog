@@ -30,7 +30,7 @@
             <li><a href="{{ route('categories.index') }}">Categories</a></li>
             <li><a href="{{ route('tags.index') }}">Tags</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="{{ Auth::logout() }}">Logout</a></li>
+              <li><a  class="logout" href="">Logout</a></li>
 
           </ul>
         </li>
@@ -45,3 +45,10 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+
+<script>
+  var logout = document.querySelector('.logout');
+
+  //logout.onclick()
+
+</script>

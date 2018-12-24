@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Category;
 use App\Post;
+use App\Tag;
 //use Illuminate\Http\Request;
 use App\Http\Requests\PostStoreRequest;
 use Session;
@@ -32,10 +33,8 @@ class PostController extends Controller
      */
     public function create()
     {    $categories = Category::all();
-         $tages=[ ['id'=>"id","name"=>"name"] ];
-         $tags=  json_decode(json_encode($tages));
-
-        return view('posts.create', compact('categories','tags'));
+        $tags = Tag::all();
+       return view('posts.create', compact('categories','tags'));
     }
 
     /**
@@ -46,9 +45,11 @@ class PostController extends Controller
      */
     public function store(PostStoreRequest $request)
     {
+
         $validated = $request->validated();
         $post=Post::create($validated);
-        dump($post);
+        $post->tags()->sync($request->tags,false);
+
        Session::flash('success',"the blog was saved");
         return redirect()->route('posts.show',$post->id);
     }
@@ -61,7 +62,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-            return view('posts.show',compact('post'));
+
+        return view('posts.show',compact('post'));
     }
 
     /**
@@ -73,13 +75,18 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories =Category::all();
+        $alltag =Tag::all();
 
         $cats = array();
         foreach ($categories as $category){
             $cats[$category->id]=$category->name;
         }
+        $tgs = array();
+        foreach ($alltag as $tag){
+            $tgs[$tag->id]=$tag->name;
+        }
 
-      return view('posts.edit')->withPost($post)->withCategories($cats);
+      return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tgs);
 
     }
 
@@ -93,16 +100,16 @@ class PostController extends Controller
     public function update(PostStoreRequest $request, Post $post)
     {
 
-         if($request->input('slug')== $post->slug){
-             $validated =$request->validated([
-                 "slug" =>'required|alpha_dash|min:5|max:100 ',
-                 "body" =>'required|min:5',
-                 "title" =>'required|min:10|max:25'
-             ]);
-         }else{
-            $validated = $request->validated();
-         }
+        $validated = $request->validated();
         $post->update($validated);
+
+        if(isset($request->tags)){
+            $post->tags()->sync($request->tags,true);
+        }else{
+            $post->tags()->sync([],true);
+        }
+
+
         Session::flash('success','the Post was updated successfully');
         return redirect()->route('posts.show',compact('post'));
     }
@@ -115,6 +122,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $post->tags()->detach();
         $post->delete();
          Session::flash('success',"the post is Deleted");
         return redirect()->route('posts.index');
